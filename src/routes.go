@@ -1,9 +1,13 @@
-package src
+package main
 
-import "github.com/gin-gonic/gin"
+import (
+	"technoTroveServer/src/api/healthcheck"
 
-func ConfigeRoutes(router *gin.Engine) {
-	router.GET("api/healthCheck")
+	"github.com/gin-gonic/gin"
+)
+
+func configeRoutes(router *gin.Engine) {
+	router.GET("/api/healthcheck", healthcheck.Handler)
 	router.GET("/api/users")
 	router.GET("/api/projects")
 	router.POST("/auth/local")
