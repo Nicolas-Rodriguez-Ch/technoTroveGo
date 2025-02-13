@@ -5,7 +5,7 @@ import (
 )
 
 func RegisterRoutes(router *gin.Engine) {
-	userGroup := router.Group("/api/project")
+	userGroup := router.Group("/api/users")
 	{
 		userGroup.GET("/", getAllUsersHandler)
 		// userGroup.GET("/profile", middleware.Auth, getUserByToken)
