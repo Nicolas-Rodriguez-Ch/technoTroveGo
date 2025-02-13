@@ -2,8 +2,7 @@ package db
 
 import (
 	"log"
-	"technoTroveServer/src/api/projects"
-	"technoTroveServer/src/api/users"
+	"technoTroveServer/src/models"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -27,7 +26,7 @@ func Connect(dsn string) {
 }
 
 func AutoMigrate() {
-	err := DB.AutoMigrate(&users.User{}, &projects.Project{})
+	err := DB.AutoMigrate(&models.User{}, &models.Project{})
 	if err != nil {
 		log.Fatal("Error during auto migration:", err)
 	}

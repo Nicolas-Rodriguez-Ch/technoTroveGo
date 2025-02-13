@@ -1,11 +1,13 @@
 package users
 
-type User struct {
-	ID             uint `gorm:"primaryKey"`
-	FullName       string
-	Email          string
-	Password       string
-	Description    string
-	ContactInfo    []string `gorm:"type:text[]"`
-	ProfilePicture *string
+import (
+	"technoTroveServer/src/models"
+
+	"gorm.io/gorm"
+)
+
+func getAllUsers(db *gorm.DB) ([]models.User, error) {
+	var users []models.User
+	err := db.Preload("Projects", "active = ?", true).Find(&users).Error
+	return users, err
 }

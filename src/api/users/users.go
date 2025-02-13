@@ -1,0 +1,17 @@
+package users
+
+import (
+	"github.com/gin-gonic/gin"
+)
+
+func RegisterRoutes(router *gin.Engine) {
+	userGroup := router.Group("/api/project")
+	{
+		userGroup.GET("/", getAllUsersHandler)
+		// userGroup.GET("/profile", middleware.Auth, getUserByToken)
+		// userGroup.GET("/:id", getUserProfile)
+		// userGroup.PUT("/", middleware.Auth, middleware.ProcessFileUploads, updateUser)
+		// userGroup.DELETE("/deactivate", middleware.Auth, deleteUser)
+	}
+}
+
