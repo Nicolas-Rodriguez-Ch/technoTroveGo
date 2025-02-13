@@ -7,12 +7,12 @@ type Project struct {
 	Active      bool `gorm:"default:true"`
 	UserID      uint `gorm:"index"`
 	Title       string
-	Description string   `gorm:"type:varchar(500)"`
-	Images      []string `gorm:"type:text[]"`
-	Links       []string `gorm:"type:text[]"`
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
-	User        User `gorm:"foreignKey:UserID;references:ID"`
+	Description string    `gorm:"type:varchar(500)"`
+	Images      []string  `gorm:"type:text[]"`
+	Links       []string  `gorm:"type:text[]"`
+	CreatedAt   time.Time `gorm:"type:timestamptz;default:now()"`
+	UpdatedAt   time.Time `gorm:"type:timestamptz;default:now()"`
+	User        User      `gorm:"foreignKey:UserID;references:ID"`
 }
 
 type User struct {
@@ -24,7 +24,7 @@ type User struct {
 	ContactInfo    []string `gorm:"type:text[]"`
 	ProfilePicture *string
 	Auth0UserID    *string
-	CreatedAt      time.Time
-	UpdatedAt      time.Time
+	CreatedAt      time.Time `gorm:"type:timestamptz;default:now()"`
+	UpdatedAt      time.Time `gorm:"type:timestamptz;default:now()"`
 	Projects       []Project `gorm:"foreignKey:UserID;references:ID"`
 }
