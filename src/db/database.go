@@ -2,21 +2,16 @@ package db
 
 import (
 	"log"
-	"os"
 	"technoTroveServer/src/api/projects"
 	"technoTroveServer/src/api/users"
 
-	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
 var DB *gorm.DB
 
-func Connect() {
-	godotenv.Load()
-
-	dsn := os.Getenv("DATABASE_URL")
+func Connect(dsn string) {
 
 	if dsn == "" {
 		log.Fatal("DATABASE_URL not set in environentm")

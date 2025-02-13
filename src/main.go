@@ -11,8 +11,11 @@ import (
 
 func main() {
 	godotenv.Load()
-	db.Connect()
 	port := os.Getenv("PORT")
+	dsn := os.Getenv("DATABASE_URL")
+	
+	db.Connect(dsn)
+
 	println(port)
 	if port == "" {
 		port = "8080"
