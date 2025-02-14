@@ -3,6 +3,7 @@ package main
 import (
 	"technoTroveServer/src/api/healthcheck"
 	"technoTroveServer/src/api/users"
+	"technoTroveServer/src/auth/local"
 	// "technoTroveServer/src/api/projects"
 
 	"github.com/gin-gonic/gin"
@@ -10,8 +11,8 @@ import (
 
 func configeRoutes(router *gin.Engine) {
 	router.GET("/api/healthcheck", healthcheck.Handler)
-	// projects.RegisterRoutes(router)
+	localAuth.RegisterRoutes(router)
 	users.RegisterRoutes(router)
+	// projects.RegisterRoutes(router)
 	router.GET("/api/projects")
-	router.POST("/auth/local")
 }
