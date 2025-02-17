@@ -2,6 +2,7 @@ package localAuth
 
 import (
 	"strings"
+	"technoTroveServer/src/db"
 	"technoTroveServer/src/models"
 
 	"github.com/gin-gonic/gin"
@@ -24,4 +25,7 @@ func signUpHandler(c *gin.Context) {
 			contactInfoArray[i] = strings.TrimSpace(info)
 		}
 	}
+
+	var existingUser models.User
+	err = db.DB.Where("email = ?", input.Email).First(&existingUser).Error
 }
