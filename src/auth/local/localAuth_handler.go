@@ -15,8 +15,17 @@ import (
 func signUpHandler(c *gin.Context) {
 	var input models.User
 	var contactInfoArray []string
+	var existingUser models.User
 
 	input.Email = c.PostForm("email")
+
+	err := db.DB.Where("email = ?", input.Email).First(&existingUser).Error
+
+	if err == nil {
+		c.JSON(http.StatusConflict, gin.H{"message": "User with this email already exists"})
+		return
+	}
+
 	input.Password = c.PostForm("password")
 	input.FullName = c.PostForm("fullName")
 	input.Description = c.PostForm("description")
@@ -28,6 +37,7 @@ func signUpHandler(c *gin.Context) {
 
 	if input.Email == "" || input.Password == "" || input.FullName == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "Invalid input", "error": "Invalid input"})
+		return
 	}
 
 	if len(input.ContactInfo) > 0 && len(input.ContactInfo[0]) > 0 {
@@ -38,17 +48,10 @@ func signUpHandler(c *gin.Context) {
 		}
 	}
 
-	var existingUser models.User
-	err := db.DB.Where("email = ?", input.Email).First(&existingUser).Error
-
-	if err == nil {
-		c.JSON(http.StatusConflict, gin.H{"message": "User with this email already exists"})
-		return
-	}
-
 	passwordHash, err := bcrypt.GenerateFromPassword([]byte(input.Password), bcrypt.DefaultCost)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "Error hashing password", "error": err.Error()})
+		return
 	}
 
 	profilePictures := utils.ConvertFilesToImageUrls(c)
