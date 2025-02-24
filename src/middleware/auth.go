@@ -3,7 +3,7 @@ package middleware
 import (
 	"net/http"
 	"strings"
-	// "technoTroveServer/src/utils"
+	"technoTroveServer/src/utils"
 
 	"github.com/gin-gonic/gin"
 )
@@ -22,6 +22,12 @@ func Auth(c *gin.Context) {
 		return
 	}
 
-	// token := parts[1]
-	// decodedToken, err := utils.VerifyToken(token)
+	token := parts[1]
+	decodedToken, err := utils.VerifyToken(token)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"message": "Invalid token, please log in again"})
+		return
+	}
+	c.Set("user", decodedToken.ID)
+	c.Next()
 }

@@ -24,7 +24,7 @@ func UploadToCloudinary(fileBuffer []byte, fileType string) (*uploader.UploadRes
 	cloudinaryApiKey := os.Getenv("CLOUDINARY_API_KEY")
 	cloudinaryApiSecret := os.Getenv("CLOUDINARY_API_SECRET")
 	if cloudinaryCloudName == "" || cloudinaryApiKey == "" || cloudinaryApiSecret == "" {
-		return nil, errors.New("Not all neccesarry cloudinary credentials are in the env files, please check")
+		return nil, errors.New("not all neccesarry cloudinary credentials are in the env files, please check")
 	}
 
 	cld, err := cloudinary.NewFromParams(cloudinaryCloudName, cloudinaryApiKey, cloudinaryApiSecret)
