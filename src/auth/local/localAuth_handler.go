@@ -17,11 +17,19 @@ func signUpHandler(c *gin.Context) {
 	var input models.User
 	var contactInfoArray []string
 
-	err := c.ShouldBind(&input)
+	input.Email = c.PostForm("email")
+	input.Password = c.PostForm("password")
+	input.FullName = c.PostForm("fullName")
+	input.Description = c.PostForm("description")
 
-	fmt.Println("esto es input", input)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"message": "Invalid input", "error": err})
+	contactInfo := c.PostForm("contactInfo")
+	if contactInfo != "" {
+		contactInfoArray = strings.Split(contactInfo, ", ")
+	}
+
+	fmt.Println("input extraido del post form", input)
+	if input.Email == "" || input.Password == "" || input.FullName == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"message": "Invalid input", "error": "Invalid input"})
 	}
 
 	if len(input.ContactInfo) > 0 && len(input.ContactInfo[0]) > 0 {
@@ -33,7 +41,7 @@ func signUpHandler(c *gin.Context) {
 	}
 
 	var existingUser models.User
-	err = db.DB.Where("email = ?", input.Email).First(&existingUser).Error
+	err := db.DB.Where("email = ?", input.Email).First(&existingUser).Error
 
 	if err == nil {
 		c.JSON(http.StatusConflict, gin.H{"message": "User with this email already exists"})
@@ -56,6 +64,7 @@ func signUpHandler(c *gin.Context) {
 	input.Password = string(passwordHash)
 	input.ContactInfo = contactInfoArray
 	input.ProfilePicture = profilePicture
+	fmt.Println("el valor de contact info es:", input.ContactInfo)
 
 	createdUser, err := users.CreateUser(&input, db.DB)
 
