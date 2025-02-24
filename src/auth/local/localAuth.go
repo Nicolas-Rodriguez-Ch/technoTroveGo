@@ -10,6 +10,6 @@ func RegisterRoutes(router *gin.Engine) {
 	localAuthGroup := router.Group("/auth/local")
 	{
 		localAuthGroup.POST("/signup", middleware.ProcessFileUpload,  signUpHandler)
-		// localAuthGroup.POST("/login", loginHandler)
+		localAuthGroup.POST("/login", loginHandler)
 	}
 }
