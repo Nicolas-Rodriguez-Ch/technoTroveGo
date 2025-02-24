@@ -7,6 +7,7 @@ import (
 	"technoTroveServer/src/api/users"
 	"technoTroveServer/src/db"
 	"technoTroveServer/src/models"
+	"technoTroveServer/src/utils"
 
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
@@ -44,7 +45,7 @@ func signUpHandler(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "Error hashing password", "error": err.Error()})
 	}
 
-	profilePictures := utils.ConvertFilesToImagesUrls(c)
+	profilePictures := utils.ConvertFilesToImageUrls(c)
 
 	var profilePicture *string
 
