@@ -79,7 +79,7 @@ func signUpHandler(c *gin.Context) {
 		return
 	}
 
-	token, err := SignToken(&DecodedToken{ID: string(createdUser.ID)})
+	token, err := utils.SignToken(&utils.DecodedToken{ID: string(createdUser.ID)})
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "Error generating token", "error": err.Error()})
@@ -104,7 +104,7 @@ func loginHandler(c *gin.Context) {
 		return
 	}
 
-	user, err := Login(db.DB, loginInfo.Email)
+	user, err := utils.Login(db.DB, loginInfo.Email)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"message": "Email or password are incorrect"})
 		return
@@ -115,7 +115,7 @@ func loginHandler(c *gin.Context) {
 		return
 	}
 
-	token, err := SignToken(&DecodedToken{ID: fmt.Sprint(user.ID)})
+	token, err := utils.SignToken(&utils.DecodedToken{ID: fmt.Sprint(user.ID)})
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "Error generating token", "error": err.Error()})
