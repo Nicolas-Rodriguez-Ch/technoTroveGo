@@ -23,3 +23,12 @@ func CreateUser(input *models.User, db *gorm.DB) (*models.User, error) {
 	}
 	return input, nil
 }
+
+func getUserById(id string, db *gorm.DB) (*models.User, error) {
+	var user models.User
+	err := db.Preload("Projects", "active = ?", true).First(&user, id).Error
+	if err != nil {
+		return nil, err
+	}
+	return &user, err
+}
