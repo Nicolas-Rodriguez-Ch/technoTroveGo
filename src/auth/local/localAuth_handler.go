@@ -1,7 +1,6 @@
 package localAuth
 
 import (
-	"fmt"
 	"net/http"
 	"strings"
 	"technoTroveServer/src/api/users"
@@ -27,7 +26,6 @@ func signUpHandler(c *gin.Context) {
 		contactInfoArray = strings.Split(contactInfo, ", ")
 	}
 
-	fmt.Println("input extraido del post form", input)
 	if input.Email == "" || input.Password == "" || input.FullName == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "Invalid input", "error": "Invalid input"})
 	}
@@ -64,7 +62,6 @@ func signUpHandler(c *gin.Context) {
 	input.Password = string(passwordHash)
 	input.ContactInfo = contactInfoArray
 	input.ProfilePicture = profilePicture
-	fmt.Println("el valor de contact info es:", input.ContactInfo)
 
 	createdUser, err := users.CreateUser(&input, db.DB)
 

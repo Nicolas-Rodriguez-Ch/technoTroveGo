@@ -2,7 +2,6 @@ package users
 
 import (
 	"errors"
-	"fmt"
 	"technoTroveServer/src/models"
 
 	"gorm.io/gorm"
@@ -15,7 +14,6 @@ func getAllUsers(db *gorm.DB) ([]models.User, error) {
 }
 
 func CreateUser(input *models.User, db *gorm.DB) (*models.User, error) {
-	fmt.Println("Esto es input:", input)
 	result := db.Create(input)
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrDuplicatedKey) {

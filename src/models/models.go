@@ -1,6 +1,9 @@
 package models
 
-import "time"
+import (
+	"github.com/lib/pq"
+	"time"
+)
 
 type Project struct {
 	ID          uint `gorm:"primaryKey"`
@@ -20,8 +23,8 @@ type User struct {
 	FullName       string
 	Email          string `gorm:"unique"`
 	Password       string
-	Description    string   `gorm:"type:varchar(500)"`
-	ContactInfo    []string `gorm:"type:text[]"`
+	Description    string         `gorm:"type:varchar(500)"`
+	ContactInfo    pq.StringArray `gorm:"type:text[]"`
 	ProfilePicture *string
 	Auth0UserID    *string
 	CreatedAt      time.Time `gorm:"type:timestamptz;default:now()"`
