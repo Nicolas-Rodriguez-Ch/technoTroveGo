@@ -2,6 +2,7 @@ package users
 
 import (
 	"net/http"
+	"strings"
 	"technoTroveServer/src/db"
 	"technoTroveServer/src/models"
 	"technoTroveServer/src/utils"
@@ -58,14 +59,20 @@ func getUserProfileHanlder(c *gin.Context) {
 	})
 }
 
-func updateUserHanlder(c *gin.Context) {
+func updateUserHandler(c *gin.Context) {
 	user, exist := c.Get("user")
-	id := user.(string)
 	if !exist {
 		c.JSON(http.StatusUnauthorized, gin.H{"message": "Unauthorized"})
 		return
 	}
+	id, ok := user.(string)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{"message": "Invalid user ID"})
+		return
+	}
+
 	var input models.User
+	var contactInfoArray []string
 
 	input.Password = c.PostForm("password")
 	input.FullName = c.PostForm("fullName")
@@ -74,6 +81,7 @@ func updateUserHanlder(c *gin.Context) {
 	contactInfo := c.PostForm("contactInfo")
 	if contactInfo != "" {
 		contactInfoArray = strings.Split(contactInfo, ", ")
+		input.ContactInfo = contactInfoArray
 	}
 
 	profilePictures := utils.ConvertFilesToImageUrls(c)

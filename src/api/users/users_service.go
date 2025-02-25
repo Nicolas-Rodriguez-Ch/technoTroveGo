@@ -54,7 +54,7 @@ func updateUser(id string, input *models.User, db *gorm.DB) (*models.UserRespons
 	var existingUser models.User
 
 	if err := db.First(&existingUser, "id = ?", id).Error; err != nil {
-		return nil, errors.New("User not found")
+		return nil, errors.New("user not found")
 	}
 	updates := map[string]interface{}{}
 
@@ -67,7 +67,7 @@ func updateUser(id string, input *models.User, db *gorm.DB) (*models.UserRespons
 	if input.Password != "" {
 		hashedPass, err := bcrypt.GenerateFromPassword([]byte(input.Password), bcrypt.DefaultCost)
 		if err != nil {
-			return nil, errors.New("Error hashing password")
+			return nil, errors.New("error hashing password")
 		}
 		updates["password"] = string(hashedPass)
 	}
@@ -83,7 +83,7 @@ func updateUser(id string, input *models.User, db *gorm.DB) (*models.UserRespons
 	}
 
 	if len(updates) == 0 {
-		return nil, errors.New("No updates provided")
+		return nil, errors.New("no updates provided")
 	}
 
 	if err := db.Model(&existingUser).Updates(updates).Error; err != nil {

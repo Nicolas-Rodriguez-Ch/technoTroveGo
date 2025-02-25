@@ -12,7 +12,7 @@ func RegisterRoutes(router *gin.Engine) {
 		userGroup.GET("/", getAllUsersHandler)
 		userGroup.GET("/profile", middleware.Auth, getUserByTokenHandler)
 		userGroup.GET("/:id", getUserProfileHanlder)
-		userGroup.PUT("/", middleware.Auth, middleware.ProcessFileUpload, updateUserHanlder)
+		userGroup.PUT("/", middleware.Auth, middleware.ProcessFileUpload, updateUserHandler)
 		// userGroup.DELETE("/deactivate", middleware.Auth, deleteUser)
 	}
 }
