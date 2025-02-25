@@ -10,8 +10,8 @@ func RegisterRoutes(router *gin.Engine) {
 	userGroup := router.Group("/api/users")
 	{
 		userGroup.GET("/", getAllUsersHandler)
-		userGroup.GET("/profile", middleware.Auth, getUserByToken)
-		// userGroup.GET("/:id", getUserProfile)
+		userGroup.GET("/profile", middleware.Auth, getUserByTokenHandler)
+		userGroup.GET("/:id", getUserProfileHanlder)
 		// userGroup.PUT("/", middleware.Auth, middleware.ProcessFileUploads, updateUser)
 		// userGroup.DELETE("/deactivate", middleware.Auth, deleteUser)
 	}

@@ -21,7 +21,7 @@ func getAllUsersHandler(c *gin.Context) {
 	})
 }
 
-func getUserByToken(c *gin.Context) {
+func getUserByTokenHandler(c *gin.Context) {
 	user, exist := c.Get("user")
 	id := user.(string)
 	if !exist {
@@ -29,6 +29,23 @@ func getUserByToken(c *gin.Context) {
 		return
 	}
 	fetchedUser, err := getUserById(id, db.DB)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"message": "User not found"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"message": "User found!",
+		"data":    fetchedUser,
+	})
+}
+
+func getUserProfileHanlder(c *gin.Context) {
+	id := c.Param("id")
+	if id == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"message": "No user ID provided"})
+		return
+	}
+	fetchedUser, err := getUserProfile(id, db.DB)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"message": "User not found"})
 		return

@@ -35,3 +35,16 @@ func getUserById(id string, db *gorm.DB) (*models.User, error) {
 	}
 	return &user, err
 }
+
+func getUserProfile(id string, db *gorm.DB) (*models.UserResponse, error) {
+	var user models.UserResponse
+	err := db.Model(&models.User{}).
+		Select("id, full_name, email, description, contact_info, profile_picture").
+		Preload("Projects", "active = ?", true).
+		Where("id = ?", id).
+		First(&user).Error
+	if err != nil {
+		return nil, err
+	}
+	return &user, nil
+}
