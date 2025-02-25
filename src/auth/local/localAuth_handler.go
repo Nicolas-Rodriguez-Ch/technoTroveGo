@@ -10,6 +10,7 @@ import (
 	"technoTroveServer/src/utils"
 
 	"github.com/gin-gonic/gin"
+	"github.com/lucsky/cuid"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -32,6 +33,7 @@ func signUpHandler(c *gin.Context) {
 		return
 	}
 
+	input.ID = cuid.New()
 	input.Password = c.PostForm("password")
 	input.FullName = c.PostForm("fullName")
 	input.Description = c.PostForm("description")

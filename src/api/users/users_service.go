@@ -7,9 +7,12 @@ import (
 	"gorm.io/gorm"
 )
 
-func getAllUsers(db *gorm.DB) ([]models.User, error) {
-	var users []models.User
-	err := db.Preload("Projects", "active = ?", true).Find(&users).Error
+func getAllUsers(db *gorm.DB) ([]models.UserResponse, error) {
+	var users []models.UserResponse
+	err := db.Model(&models.User{}).
+		Select("id, full_name, email, description, contact_info, profile_picture").
+		Preload("Projects", "active = ?", true).
+		Find(&users).Error
 	return users, err
 }
 
@@ -26,7 +29,7 @@ func CreateUser(input *models.User, db *gorm.DB) (*models.User, error) {
 
 func getUserById(id string, db *gorm.DB) (*models.User, error) {
 	var user models.User
-	err := db.Preload("Projects", "active = ?", true).First(&user, id).Error
+	err := db.Preload("Projects", "active = ?", true).Where("id = ?", id).First(&user).Error
 	if err != nil {
 		return nil, err
 	}
