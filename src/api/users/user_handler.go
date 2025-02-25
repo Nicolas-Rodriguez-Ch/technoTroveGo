@@ -3,6 +3,8 @@ package users
 import (
 	"net/http"
 	"technoTroveServer/src/db"
+	"technoTroveServer/src/models"
+	"technoTroveServer/src/utils"
 
 	"github.com/gin-gonic/gin"
 )
@@ -53,5 +55,42 @@ func getUserProfileHanlder(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"message": "User found!",
 		"data":    fetchedUser,
+	})
+}
+
+func updateUserHanlder(c *gin.Context) {
+	user, exist := c.Get("user")
+	id := user.(string)
+	if !exist {
+		c.JSON(http.StatusUnauthorized, gin.H{"message": "Unauthorized"})
+		return
+	}
+	var input models.User
+
+	input.Password = c.PostForm("password")
+	input.FullName = c.PostForm("fullName")
+	input.Description = c.PostForm("description")
+
+	contactInfo := c.PostForm("contactInfo")
+	if contactInfo != "" {
+		contactInfoArray = strings.Split(contactInfo, ", ")
+	}
+
+	profilePictures := utils.ConvertFilesToImageUrls(c)
+	if len(profilePictures) > 0 {
+		input.ProfilePicture = &profilePictures[0]
+	}
+
+	updatedUser, err := updateUser(id, &input, db.DB)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "error updating user",
+			"Error":   err.Error(),
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"message": "User updated",
+		"data":    updatedUser,
 	})
 }

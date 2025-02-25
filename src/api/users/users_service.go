@@ -4,6 +4,7 @@ import (
 	"errors"
 	"technoTroveServer/src/models"
 
+	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
 
@@ -47,4 +48,55 @@ func getUserProfile(id string, db *gorm.DB) (*models.UserResponse, error) {
 		return nil, err
 	}
 	return &user, nil
+}
+
+func updateUser(id string, input *models.User, db *gorm.DB) (*models.UserResponse, error) {
+	var existingUser models.User
+
+	if err := db.First(&existingUser, "id = ?", id).Error; err != nil {
+		return nil, errors.New("User not found")
+	}
+	updates := map[string]interface{}{}
+
+	if input.FullName != "" {
+		updates["full_name"] = input.FullName
+	}
+	if input.Email != "" {
+		updates["email"] = input.Email
+	}
+	if input.Password != "" {
+		hashedPass, err := bcrypt.GenerateFromPassword([]byte(input.Password), bcrypt.DefaultCost)
+		if err != nil {
+			return nil, errors.New("Error hashing password")
+		}
+		updates["password"] = string(hashedPass)
+	}
+	if input.Description != "" {
+		updates["description"] = input.Description
+	}
+	if len(input.ContactInfo) > 0 {
+		updates["contact_info"] = input.ContactInfo
+	}
+	
+	if input.ProfilePicture != nil && (existingUser.ProfilePicture == nil || *input.ProfilePicture != *existingUser.ProfilePicture) {
+		updates["profile_picture"] = input.ProfilePicture
+	}
+
+	if len(updates) == 0 {
+		return nil, errors.New("No updates provided")
+	}
+
+	if err := db.Model(&existingUser).Updates(updates).Error; err != nil {
+		return nil, err
+	}
+
+	var updatedUser models.UserResponse
+	if err := db.Model(&models.User{}).
+		Select("id, full_name, email, description, contact_info, profile_picture").
+		Where("id = ?", id).
+		First(&updatedUser).Error; err != nil {
+		return nil, err
+	}
+
+	return &updatedUser, nil
 }
