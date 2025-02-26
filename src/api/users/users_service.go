@@ -77,7 +77,7 @@ func updateUser(id string, input *models.User, db *gorm.DB) (*models.UserRespons
 	if len(input.ContactInfo) > 0 {
 		updates["contact_info"] = input.ContactInfo
 	}
-	
+
 	if input.ProfilePicture != nil && (existingUser.ProfilePicture == nil || *input.ProfilePicture != *existingUser.ProfilePicture) {
 		updates["profile_picture"] = input.ProfilePicture
 	}
@@ -99,4 +99,23 @@ func updateUser(id string, input *models.User, db *gorm.DB) (*models.UserRespons
 	}
 
 	return &updatedUser, nil
+}
+
+func deactivateUser(id string, db *gorm.DB) (*models.UserResponse, error) {
+	if err := db.Where("user_id = ?", id).Delete(&models.Project{}).Error; err != nil {
+		return nil, err
+	}
+
+	var deletedUser models.UserResponse
+	if err := db.Model(&models.User{}).
+		Select("id, full_name, email, description, contact_info, profile_picture").
+		Where("id = ?", id).
+		First(&deletedUser).Error; err != nil {
+		return nil, err
+	}
+
+	if err := db.Where("id = ?", id).Delete(&models.User{}).Error; err != nil {
+		return nil, err
+	}
+	return &deletedUser, nil
 }

@@ -102,3 +102,29 @@ func updateUserHandler(c *gin.Context) {
 		"data":    updatedUser,
 	})
 }
+
+func deleteUserHandler(c *gin.Context) {
+	user, exist := c.Get("user")
+	if !exist {
+		c.JSON(http.StatusUnauthorized, gin.H{"message": "Unauthorized"})
+		return
+	}
+	id, ok := user.(string)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{"message": "Invalid user ID"})
+		return
+	}
+	deactivatedUser, err := deactivateUser(id, db.DB)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "error deleting user",
+			"Error":   err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusNoContent, gin.H{
+		"message": "User deleted succesfully",
+		"data":    deactivatedUser,
+	})
+}
