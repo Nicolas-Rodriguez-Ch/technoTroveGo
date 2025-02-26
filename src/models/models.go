@@ -49,10 +49,6 @@ type ProjectResponse struct {
 	Description string         `json:"description"`
 	Images      pq.StringArray `json:"images" gorm:"type:text[]"`
 	Links       pq.StringArray `json:"links" gorm:"type:text[]"`
-	User        struct {
-		FullName       string         `json:"fullName"`
-		Email          string         `json:"email"`
-		ContactInfo    pq.StringArray `json:"contactInfo" gorm:"type:text[]"`
-		ProfilePicture *string        `json:"profilePicture"`
-	} `json:"user"`
+	User        User           `json:"user"`
+	UserID      string
 }
