@@ -33,13 +33,13 @@ type User struct {
 }
 
 type UserResponse struct {
-	ID             string            `json:"id"`
-	FullName       string            `json:"fullName"`
-	Email          string            `json:"email"`
-	Description    string            `json:"description"`
-	ProfilePicture *string           `json:"profilePicture"`
-	ContactInfo    pq.StringArray    `json:"contactInfo" gorm:"type:text[]"`
-	Projects       []ProjectResponse `json:"projects" gorm:"foreignKey:UserID;references:ID"`
+	ID             string         `json:"id"`
+	FullName       string         `json:"fullName"`
+	Email          string         `json:"email"`
+	Description    string         `json:"description"`
+	ProfilePicture *string        `json:"profilePicture"`
+	ContactInfo    pq.StringArray `json:"contactInfo" gorm:"type:text[]"`
+	Projects       []Project      `json:"projects" gorm:"foreignKey:UserID;references:ID"`
 }
 
 type ProjectResponse struct {

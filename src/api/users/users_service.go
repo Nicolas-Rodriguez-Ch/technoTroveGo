@@ -9,40 +9,14 @@ import (
 )
 
 func getAllUsers(db *gorm.DB) ([]models.UserResponse, error) {
-	var users []models.User
-	err := db.Select("id, full_name, email, description, contact_info, profile_picture").
+	var users []models.UserResponse
+	err := db.Model(&models.User{}).
+		Select("id, full_name, email, description, contact_info, profile_picture").
 		Preload("Projects", func(db *gorm.DB) *gorm.DB {
 			return db.Select("id, active, title, description, images, links").Where("active = ?", true)
 		}).
 		Find(&users).Error
-	if err != nil {
-		return nil, err
-	}
-
-	userResponses := make([]models.UserResponse, len(users))
-	for i, user := range users {
-		userResponses[i] = models.UserResponse{
-			ID:             user.ID,
-			FullName:       user.FullName,
-			Email:          user.Email,
-			Description:    user.Description,
-			ProfilePicture: user.ProfilePicture,
-			ContactInfo:    user.ContactInfo,
-			Projects:       make([]models.ProjectResponse, len(user.Projects)),
-		}
-
-		for j, project := range user.Projects {
-			userResponses[i].Projects[j] = models.ProjectResponse{
-				ID:          project.ID,
-				Active:      project.Active,
-				Title:       project.Title,
-				Description: project.Description,
-				Images:      project.Images,
-				Links:       project.Links,
-			}
-		}
-	}
-	return userResponses, nil
+	return users, err
 }
 
 func CreateUser(input *models.User, db *gorm.DB) (*models.User, error) {
@@ -58,7 +32,9 @@ func CreateUser(input *models.User, db *gorm.DB) (*models.User, error) {
 
 func getUserById(id string, db *gorm.DB) (*models.User, error) {
 	var user models.User
-	err := db.Preload("Projects", "active = ?", true).Where("id = ?", id).First(&user).Error
+	err := db.Preload("Projects", "active = ?", true).
+		Where("id = ?", id).
+		First(&user).Error
 	if err != nil {
 		return nil, err
 	}
@@ -69,7 +45,9 @@ func getUserProfile(id string, db *gorm.DB) (*models.UserResponse, error) {
 	var user models.UserResponse
 	err := db.Model(&models.User{}).
 		Select("id, full_name, email, description, contact_info, profile_picture").
-		Preload("Projects", "active = ?", true).
+		Preload("Projects", func(db *gorm.DB) *gorm.DB {
+			return db.Select("id, active, title, description, images, links").Where("active = ?", true)
+		}).
 		Where("id = ?", id).
 		First(&user).Error
 	if err != nil {
