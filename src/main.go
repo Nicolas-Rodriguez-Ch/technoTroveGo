@@ -13,8 +13,15 @@ func main() {
 	godotenv.Load()
 	port := os.Getenv("PORT")
 	dsn := os.Getenv("DATABASE_URL")
+	mode := os.Getenv("GIN_MODE")
+	autoMigrate := os.Getenv("AUTO_MIGRATE")
+
+	if mode == "" {
+		mode = gin.DebugMode
+	}
 	
-	db.Connect(dsn)
+	gin.SetMode(mode)
+	db.Connect(dsn, autoMigrate)
 
 	println(port)
 	if port == "" {

@@ -10,7 +10,7 @@ import (
 
 var DB *gorm.DB
 
-func Connect(dsn string) {
+func Connect(dsn string, autoMigratre string) {
 
 	if dsn == "" {
 		log.Fatal("DATABASE_URL not set in environentm")
@@ -22,7 +22,9 @@ func Connect(dsn string) {
 	if err != nil {
 		log.Fatal("Failed to connect to database:", err)
 	}
-	AutoMigrate()
+	if autoMigratre == "true" {
+		AutoMigrate()
+	}
 }
 
 func AutoMigrate() {
