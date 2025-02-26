@@ -33,11 +33,11 @@ type User struct {
 }
 
 type UserResponse struct {
-	ID             string         `gorm:"primaryKey"`
+	ID             string         `json:"id"`
 	FullName       string         `json:"fullName"`
-	Email          string         `gorm:"unique"`
-	Description    string         `gorm:"type:varchar(500)"`
+	Email          string         `json:"email"`
+	Description    string         `json:"description"`
+	ProfilePicture *string        `json:"profilePicture"`
 	ContactInfo    pq.StringArray `gorm:"type:text[]"`
-	ProfilePicture *string
-	Projects       []Project `gorm:"foreignKey:UserID;references:ID"`
+	Projects       []Project      `gorm:"foreignKey:UserID;references:ID"`
 }
