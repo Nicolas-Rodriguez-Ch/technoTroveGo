@@ -13,6 +13,6 @@ func RegisterRoutes(router *gin.Engine) {
 		projectGroup.GET("/:id", getProjectByIdHanlder)
 		projectGroup.POST("", middleware.Auth, middleware.ProcessFileUpload, createProjectHandler)
 		projectGroup.PUT("/:id", middleware.Auth, middleware.ProcessFileUpload, updateProjectHandler)
-		// projectGroup.PATCH("/:id", middleware.Auth, DeleteProject)
+		projectGroup.PATCH("/:id", middleware.Auth, deleteProjectHandler)
 	}
 }

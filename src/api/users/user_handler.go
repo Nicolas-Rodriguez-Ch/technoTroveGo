@@ -123,7 +123,7 @@ func deleteUserHandler(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusNoContent, gin.H{
+	c.JSON(http.StatusOK, gin.H{
 		"message": "User deleted successfully",
 		"data":    deactivatedUser,
 	})

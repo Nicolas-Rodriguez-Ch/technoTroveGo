@@ -144,3 +144,47 @@ func updateProjectHandler(c *gin.Context) {
 		"data":    updatedProject,
 	})
 }
+
+func deleteProjectHandler(c *gin.Context) {
+	user, exist := c.Get("user")
+	projectId := c.Param("id")
+
+	if !exist {
+		c.JSON(http.StatusUnauthorized, gin.H{"message": "Unauthorized"})
+		return
+	}
+	if projectId == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"message": "No Project ID provided"})
+		return
+	}
+	id, ok := user.(string)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{"message": "Invalid user ID"})
+		return
+	}
+
+	ownerShipStatus, err := checkProjectOwnerShip(id, projectId, db.DB)
+
+	if ownerShipStatus != 200 {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"message": "You don't have permission to update this project.",
+			"error":   err,
+		})
+		return
+	}
+
+	deletedProject, err := deleteProject(projectId, db.DB)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "error updating Project",
+			"Error":   err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Project deleted successfully",
+		"data":    deletedProject,
+	})
+}

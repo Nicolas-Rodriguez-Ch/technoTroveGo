@@ -1,7 +1,6 @@
 package projects
 
 import (
-	// "fmt"
 	"errors"
 	"reflect"
 	"technoTroveServer/src/models"
@@ -89,4 +88,27 @@ func updateProject(id string, input *models.Project, db *gorm.DB) (*models.Proje
 	}
 
 	return &updatedProject, nil
+}
+
+func deleteProject(projectId string, db *gorm.DB) (*models.ProjectResponse, error) {
+	err := db.Model(&models.Project{}).
+		Where("id = ?", projectId).
+		Update("active", false).Error
+
+	if err != nil {
+		return nil, err
+	}
+
+	var deletedProject models.ProjectResponse
+	err = db.Model(&models.Project{}).
+		Select("projects.id, projects.title, projects.description, projects.images, projects.links, projects.user_id, users.full_name, users.email, users.description, users.contact_info, users.profile_picture").
+		Joins("JOIN users ON users.id = projects.user_id").
+		Where("projects.id = ?", projectId).
+		First(&deletedProject).Error
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &deletedProject, nil
 }
