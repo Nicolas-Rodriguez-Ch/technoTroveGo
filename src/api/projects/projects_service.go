@@ -70,6 +70,7 @@ func updateProject(id string, input *models.Project, db *gorm.DB) (*models.Proje
 	}
 
 	if len(updateData) > 0 {
+		updateData["active"] = true
 		err = db.Model(&existingProject).Updates(updateData).Error
 		if err != nil {
 			return nil, err
