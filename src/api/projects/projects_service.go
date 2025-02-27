@@ -21,12 +21,10 @@ func getAllProjects(db *gorm.DB) ([]models.ProjectResponse, error) {
 func getProjectById(id string, db *gorm.DB) (*models.ProjectResponse, error) {
 	var project models.ProjectResponse
 	err := db.Model(&models.Project{}).
-		Where("id = ? AND active = ?", id, true).
-		Select("id, title, description, images, links").
-		Preload("User", func(db *gorm.DB) *gorm.DB {
-			return db.Select("id, full_name, email, contact_info, profile_picture")
-		}).
-		First(&project).Error
+		Select("projects.id, projects.title, projects.description, projects.images, projects.links, projects.user_id, users.full_name, users.email, users.description, users.contact_info, users.profile_picture").
+		Joins("JOIN users ON users.id = projects.user_id").
+		Where("projects.id = ? AND projects.active = ?", id, true).
+		First(&project).Error	
 
 	if err != nil {
 		return nil, err
