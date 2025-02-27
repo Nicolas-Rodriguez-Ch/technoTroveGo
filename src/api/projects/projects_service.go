@@ -10,7 +10,7 @@ import (
 func getAllProjects(db *gorm.DB) ([]models.ProjectResponse, error) {
 	var projects []models.ProjectResponse
 	err := db.Model(&models.Project{}).
-		Select("projects.id, projects.title, projects.description, projects.images, projects.links, projects.user_id, users.full_name").
+		Select("projects.id, projects.title, projects.description, projects.images, users.full_name").
 		Joins("JOIN users ON users.id = projects.user_id").
 		Where("projects.active = ?", true).
 		Find(&projects).Error
