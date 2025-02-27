@@ -1,7 +1,6 @@
 package projects
 
 import (
-	"fmt"
 	"net/http"
 	"strings"
 	"technoTroveServer/src/db"
@@ -78,7 +77,6 @@ func createProjectHandler(c *gin.Context) {
 	}
 	input.Images = pq.StringArray(utils.ConvertFilesToImageUrls(c))
 
-	fmt.Println("Este es el valor de input antes de ser pasado a la creación:", input)
 	createdProject, err := createProject(&input, db.DB)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -89,5 +87,60 @@ func createProjectHandler(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{
 		"message": "Project created successfully",
 		"data":    createdProject,
+	})
+}
+
+func updateProjectHandler(c *gin.Context) {
+	user, exist := c.Get("user")
+	projectId := c.Param("id")
+
+	if !exist {
+		c.JSON(http.StatusUnauthorized, gin.H{"message": "Unauthorized"})
+		return
+	}
+	if projectId == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"message": "No Project ID provided"})
+		return
+	}
+	id, ok := user.(string)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{"message": "Invalid user ID"})
+		return
+	}
+
+	ownerShipStatus, err := checkProjectOwnerShip(id, projectId, db.DB)
+
+	if ownerShipStatus != 200 {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"message": "You don't have permission to update this project.",
+			"error":   err,
+		})
+		return
+	}
+
+	var input models.Project
+	input.Title = c.PostForm("title")
+	input.Description = c.PostForm("description")
+
+	links := c.PostForm("links")
+	if links != "" {
+		input.Links = pq.StringArray(strings.Split(links, ","))
+		for i := range input.Links {
+			input.Links[i] = strings.TrimSpace(input.Links[i])
+		}
+	}
+	input.Images = pq.StringArray(utils.ConvertFilesToImageUrls(c))
+	updatedProject, err := updateProject(id, &input, db.DB)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "error updating Project",
+			"Error":   err.Error(),
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Project updated",
+		"data":    updatedProject,
 	})
 }
