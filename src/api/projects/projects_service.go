@@ -78,7 +78,12 @@ func updateProject(id string, input *models.Project, db *gorm.DB) (*models.Proje
 	}
 
 	var updatedProject models.ProjectResponse
-	err = db.Where("id = ?", id).First(&updatedProject).Error
+	err = db.Model(&models.Project{}).
+		Select("projects.id, projects.title, projects.description, projects.images, projects.links, projects.user_id, users.full_name, users.email, users.description, users.contact_info, users.profile_picture").
+		Joins("JOIN users ON users.id = projects.user_id").
+		Where("projects.id = ?", existingProject.ID).
+		First(&updatedProject).Error
+
 	if err != nil {
 		return nil, err
 	}
