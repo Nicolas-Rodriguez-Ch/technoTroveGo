@@ -1,6 +1,7 @@
 package projects
 
 import (
+	// "fmt"
 	"technoTroveServer/src/models"
 
 	"gorm.io/gorm"
@@ -9,11 +10,9 @@ import (
 func getAllProjects(db *gorm.DB) ([]models.ProjectResponse, error) {
 	var projects []models.ProjectResponse
 	err := db.Model(&models.Project{}).
-		Select("id, title, description, images, links, user_id").
-		Where("active = ?", true).
-		Preload("User", func(db *gorm.DB) *gorm.DB {
-			return db.Select("full_name")
-		}).
+		Select("projects.id, projects.title, projects.description, projects.images, projects.links, projects.user_id, users.full_name").
+		Joins("JOIN users ON users.id = projects.user_id").
+		Where("projects.active = ?", true).
 		Find(&projects).Error
 
 	return projects, err

@@ -50,4 +50,13 @@ type ProjectResponse struct {
 	Images      pq.StringArray `json:"images" gorm:"type:text[]"`
 	Links       pq.StringArray `json:"links" gorm:"type:text[]"`
 	UserID      string         `json:"userId"`
+	UserMinimal `json:"user" gorm:"embedded"`
+}
+
+type UserMinimal struct {
+	FullName       string         `json:"fullName"`
+	Email          string         `json:"email"`
+	Description    string         `json:"description"`
+	ProfilePicture *string        `json:"profilePicture"`
+	ContactInfo    pq.StringArray `json:"contactInfo" gorm:"type:text[]"`
 }
