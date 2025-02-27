@@ -46,7 +46,7 @@ func getUserProfile(id string, db *gorm.DB) (*models.UserResponse, error) {
 	err := db.Model(&models.User{}).
 		Select("id, full_name, email, description, contact_info, profile_picture").
 		Preload("Projects", func(db *gorm.DB) *gorm.DB {
-			return db.Select("id, active, title, description, images, links").Where("active = ?", true)
+			return db.Select("id, active, title, description, images, links, user_id").Where("active = ?", true)
 		}).
 		Where("id = ?", id).
 		First(&user).Error
