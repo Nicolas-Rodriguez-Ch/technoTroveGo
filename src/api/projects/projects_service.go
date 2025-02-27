@@ -34,3 +34,11 @@ func getProjectById(id string, db *gorm.DB) (*models.ProjectResponse, error) {
 	}
 	return &project, nil
 }
+
+func createProject(input *models.Project, db *gorm.DB) (*models.Project, error) {
+	result := db.Create(input)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return input, nil
+}

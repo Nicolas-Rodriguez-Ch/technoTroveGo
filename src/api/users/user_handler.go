@@ -19,7 +19,7 @@ func getAllUsersHandler(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"message": "Users retrieved succesfully",
+		"message": "Users retrieved successfully",
 		"data":    users,
 	})
 }
@@ -124,7 +124,7 @@ func deleteUserHandler(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusNoContent, gin.H{
-		"message": "User deleted succesfully",
+		"message": "User deleted successfully",
 		"data":    deactivatedUser,
 	})
 }

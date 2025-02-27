@@ -44,7 +44,10 @@ func signUpHandler(c *gin.Context) {
 	}
 
 	if input.Email == "" || input.Password == "" || input.FullName == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"message": "Invalid input", "error": "Invalid input"})
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "Invalid input",
+			"error":   "Invalid input",
+		})
 		return
 	}
 
@@ -58,7 +61,10 @@ func signUpHandler(c *gin.Context) {
 
 	passwordHash, err := bcrypt.GenerateFromPassword([]byte(input.Password), bcrypt.DefaultCost)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"message": "Error hashing password", "error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Error hashing password",
+			"error":   err.Error(),
+		})
 		return
 	}
 
@@ -77,14 +83,20 @@ func signUpHandler(c *gin.Context) {
 	createdUser, err := users.CreateUser(&input, db.DB)
 
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"message": "Error creating user", "error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Error creating user",
+			"error":   err.Error(),
+		})
 		return
 	}
 
 	token, err := utils.SignToken(&utils.DecodedToken{ID: string(createdUser.ID)})
 
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"message": "Error generating token", "error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Error generating token",
+			"error":   err.Error(),
+		})
 		return
 	}
 
@@ -120,7 +132,10 @@ func loginHandler(c *gin.Context) {
 	token, err := utils.SignToken(&utils.DecodedToken{ID: fmt.Sprint(user.ID)})
 
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"message": "Error generating token", "error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Error generating token",
+			"error":   err.Error(),
+		})
 		return
 	}
 
